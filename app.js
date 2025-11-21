@@ -105,7 +105,7 @@ function recordMovement({productId, productName, type, qty}){
 	  const threshold = Number(addThreshold.value||1);
 	  
 	  // Validar límites
-	  if(qty > 999999) return alert('La cantidad no puede ser mayor a 999,999');
+	  if(qty > 99999) return alert('La cantidad no puede ser mayor a 999,999');
 	  if(price > 999999999) return alert('El precio no puede ser mayor a 999,999,999');
 	  if(threshold > 999999) return alert('El umbral no puede ser mayor a 999,999');
 	  if(qty < 0) return alert('La cantidad no puede ser negativa');
