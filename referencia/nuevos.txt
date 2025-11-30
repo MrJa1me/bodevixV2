@@ -1,0 +1,8 @@
+usuario admin -> puede gestionar usuarios y sus permisos (crear - eliminar - editar) - roles disponibles por defecto (Bodeguero - Encargado de inventario - Vendedor independiente - lector - admin)
+-> creación de nombres - categorías - precios - ubicaciones - umbral alerta.
+
+usuario bodeguero -> cuando agregue productos, solo puede escribir la cantidad, los demás datos los va a seleccionar de las opciones creadas por el usuario admin (misma lógica para cuando edite los productos)
+
+usuario encargado inv. -> cuando elimine productos, tiene que elegir de un apartado de opciones llamado (razón) refiriéndose a la razón por la cual el producto ha sido eliminado (venta - vencimiento - dañado - otro (adjuntar un texto))
+ 
+eso tengo por ahora, especificando mas las cosas q podrian hacer, se me ocurrio q es mas viable de esta forma el sistema, en vez de dejar que el q agregue producto, ponga cualquier nombre y asi, creo q con esta forma hay ams control y orden de los productos q se agregan
