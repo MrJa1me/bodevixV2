@@ -1,0 +1,54 @@
+/* public/roles.css */
+
+#roles-permisos-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+thead th {
+    background-color: #f2f2f2;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.permission-name {
+    font-weight: bold;
+}
+
+.role-header {
+    text-align: center;
+}
+
+.permission-row td {
+    text-align: center;
+}
+
+.save-btn-container {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.save-btn {
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.save-btn:hover {
+    background-color: #45a049;
+}

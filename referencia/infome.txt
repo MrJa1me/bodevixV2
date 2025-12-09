@@ -1,0 +1,355 @@
+1.  Introducción     
+En la actualidad, existen pymes y pequeñas empresas que se enfrentan a desafíos cuando se trata de sus inventarios, ya sea por pérdidas de productos, desórdenes en sus bodegas, errores en el registro de información, lo cual les afecta en las tomas de decisiones, entre otras cosas. Estos son problemas que impactan de gran manera al adecuado funcionamiento de dichas entidades, generando poca eficiencia y rentabilidad, donde muchas veces el resultado es la quiebra.
+Con el propósito de abordar las necesidades mencionadas anteriormente, se ha desarrollado un proyecto sobre un sistema de inventario dirigido a estas pequeñas entidades, el cual busca poder optimizar la administración de productos mediante un fácil control y uso de manera digital. Este sistema propone mejorar la trazabilidad de artículos, reducir los errores en cuanto al manejo de datos y contribuir de manera positiva a la eficiencia de estas empresas.
+1.1.	Propósito 
+
+El propósito de este documento es detallar los requisitos que guían el desarrollo de este sistema de inventario dirigido a pymes y microempresas, buscando comprender y demostrar el alcance que se puede tener, las funcionalidades y limitaciones del proyecto, con el fin de asegurar de cubrir la mayor cantidad de necesidades de los usuarios y de esta forma dar a conocer el producto. Por lo mencionado, este documento está dirigido principalmente a los futuros usuarios.
+
+
+
+
+1.2.	Ámbito del Sistema 
+El nombre de nuestro sistema es “Bodevix” 
+El sistema permitirá visualizar cada producto con sus datos principales (nombre, precio, número de serie, cantidad, fechas y categoría) y ofrecerá una vista ordenada mediante filtros por categorías como fecha, precio, cantidad o tipo. Integrará distintos perfiles de usuario con permisos diferenciados (administrador, cajero, bodeguero, organizador, etc). Entregará la ubicación de los productos dentro de la bodega (previamente ingresada al momento de ordenarla). Podrá calcular la cantidad y precio total de todos los productos en el inventario. Dará la posibilidad de modificar cualquier aspecto de los datos del inventario, sea cantidad, precio, etc. Permitirá el ingreso rápido de productos mediante lectura de código de barras o QR, además del ingreso manual. Se podrá acceder desde teléfonos inteligentes, laptops y tablets (aplicación/página web).
+En contraparte, el sistema no realizará un guardado de información acerca de las ofertas en productos, solo sobre el precio original de éste y su posterior posible edición. No servirá como sistema de ventas, actuará única y exclusivamente como un inventario. No tendrá información relacionada con las mediciones de cada producto en exhibición, es decir, no mostrará una cantidad faltante para completar la cantidad máxima de productos que deberían estar en exhibición, solo mostrará la cantidad de productos que se encuentran en el local. 
+En los requisitos de negocio se tienen en cuenta la optimización de la gestión de inventario, reduciendo pérdidas por caducidad, errores o robos, la disminución de tiempos, junto con los costos operativos en los procesos de entrada, salida y control de stock. una Aseguración de la información confiable para la toma de decisiones en las compras, ventas y reposiciones, también se busca mejorar la trazabilidad de productos y movimientos para cumplir con fiscalizaciones tanto internas como externas.
+
+En relación al ámbito financiero, las métricas serían aspectos como el tener una mayor tasa de ingresos de dinero al bajar la perdida de productos y junto con un gasto justo, responsable y necesario en el stock de productos, se debería llegar a una liberación considerable de capital.
+Por el contrario, en relación al éxito no financiero se espera una baja en el tiempo invertido de los dueños en la gestión de productos, junto con unos clientes más satisfechos por la completa disponibilidad de productos en el negocio.
+Nuestro producto es un sistema de organización mediante un inventario de productos en pymes, con una visión en que nuestros usuarios serán los dueños de estos negocios, los cuales necesitan una actualización en la organización de sus productos. Nuestro sistema dará organización e información de los productos, más a profundidad, cada producto tendrá la información sobre su nombre, numero serie, cantidad, precio, fecha de vencimiento y recepción, su ubicación y categoría a la que pertenece, también otorgando el respectivo recuento del total de productos, junto con el total de dinero de estos. Con aspectos como estos se espera que les den a los dueños las herramientas necesarias para tomar decisiones más seguras, tener un mayor conocimiento a la hora de invertir, otorgándoles una menor pérdida de productos y, por ende, de dinero. A diferencia del estado actual de inventario que poseen estos negocios, como lo serían las listas en libretas físicas que tengan la información sobre los productos o hasta en sistemas deficientes para la organización de estos, como unas notas en un celular, por ejemplo, nuestro producto dará un espacio confiable, seguro, de fácil organización y edición. Agregando que, al ser de tipo digital, tendrá una interfaz simple y fácilmente consultable, dado que se puede acceder mediante dispositivos tan comunes hoy en día como lo sería un celular.
+
+
+
+
+1.3.	Visión General del Documento
+A continuación, se presenta un resumen de la estructura del documento de Especificación de Requisitos (ER), describiendo los contenidos y la organización de las secciones
+1.3.1	Descripción General
+Esta sección describe los factores que influyen en el producto y su contexto. Se divide en tres subsecciones:
+Perspectiva del Producto: No se especifica el contenido, pero se menciona como una de las partes de la descripción general del producto.
+Funciones del Producto: Resume las funciones del futuro sistema de manera organizada. Se pueden utilizar gráficos para reflejar las relaciones entre las funciones.
+Características de los Usuarios: Describe las características generales de los usuarios, como su nivel educativo y experiencia. También define los
+ tipos de usuarios con sus perfiles.
+1.3.2	Requisitos del Proyecto
+Esta sección define los requisitos del sistema.
+Requisitos Funcionales: Define las acciones fundamentales que el sistema debe realizar al recibir, procesar y producir información. Cada requisito es una funcionalidad esencial del software, organizada en sub apartados para mayor claridad.
+Requisitos No Funcionales: Cubre otros aspectos como requisitos de rendimiento, seguridad y otros requisitos técnicos.
+
+
+
+1.3.2	 Propuesta de Planificación
+Esta sección se centra en la organización del proyecto.
+Definición del Equipo de Trabajo: Describe los roles y responsabilidades de cada miembro del equipo, como el Product Owner, el Scrum Master, el Development Team.
+2. Descripción General 
+En esta sección se presentan los aspectos generales que caracterizan este sistema de inventario desarrollado, con el objetivo de mostrar su funcionamiento y posteriormente facilitar la definición de los requisitos. En este punto se abordan temas fundamentales como: la perspectiva del producto, las funciones principales del sistema y las características de usuarios al que está destinado.
+2.1.	Perspectiva del Producto 
+El software de inventario para microempresas y pymes del rubro “supermercadista” será un sistema independiente, diseñado principalmente para operar de manera autónoma en computadores personales y dispositivos móviles. No depende de otros sistemas externos para cumplir sus funciones principales, aunque podrá integrarse opcionalmente hardware común como lectores de código de barras o directamente las cámaras de dispositivos móviles para la lectura de estos tipos de códigos mencionados.
+
+El producto utilizará una base de datos propia para el almacenamiento de la información de inventario, ventas y productos, pero no requiere de otros softwares empresariales para operar. No obstante, se considera la posibilidad de interoperar con planillas electrónicas (Excel o CSV) para facilitar la importación o exportación de datos, lo que permitirá a los usuarios una mayor flexibilidad y compatibilidad con herramientas que ya utilizan.
+En resumen, el sistema será autónomo, escalable y adaptable, con la capacidad de integrarse de manera sencilla con dispositivos externos (lectores) y formatos de datos estándar, pero sin depender de otros productos para su funcionamiento básico.
+
+2.2.	Funciones del Producto 
+El sistema de inventario ofrecerá las siguientes funciones principales:
+Gestión de productos: Registrar, editar y eliminar productos.
+
+
+Control de stock: Visualizar existencias, actualizar cantidades y alertar bajo stock.
+
+
+Lectura de códigos de barra/QR: Agregar productos mediante cámara o lector externo.
+
+
+Gestión de proveedores: Registrar y administrar información que entregan los proveedores.
+
+Reportes: Generar informes de inventario y exportar datos.
+
+Gestión de usuarios: Definir roles y permisos.
+
+Acceso multiplataforma: Disponible en PC y dispositivos móviles.
+
+
+
+
+
+2.3.	Características de los Usuarios 
+Como se ha mencionado con anterioridad, el sistema está dirigido principalmente a pymes y microempresas, teniendo en cuenta a la diversidad de personal de estos, por lo que se consideran diversos perfiles de usuarios, algunos de ellos son los siguientes:
+Bodegueros: Encargados de registrar ingresos y edición de productos, es decir, actualizar cantidades y mantener el inventario al día. Muchas veces, este tipo de trabajadores son personas con niveles de estudios básicos o estudiantes cursando niveles superiores, por lo tanto, se podría deducir que la mayoría no tenga mayor experiencia con la tecnología o sistemas que salgan de sus zonas de confort.
+Encargado de inventario: Usuario con un mayor nivel de responsabilidad; toma decisiones estratégicas y necesita una visión general del funcionamiento. Supervisa las operaciones y se encarga del control detallado del inventario, lo que son las pérdidas y discrepancias. Se podría deducir que podrían llegar a tener un nivel de estudios más avanzado, como también es probable que pudo haber llegado al puesto por antigüedad en la empresa.
+Vendedores independientes: Estos podrían ser considerados como las personas que tienen su negocio propio, como un almacén o algún tipo de emprendimiento. Probablemente son personas que requieren de ingresos extras o que han decidido dejar de ser trabajadores dependientes. Podrían o no tener un nivel de estudios más alto, como también el nivel de conocimiento con respecto a la tecnología; además, muchas veces son los encargados de desempeñar la mayoría de los cargos en los negocios, por lo que, su poco conocimiento en el rubro podría llegar a afectar al negocio en cierta medida. Ellos serán capaces de registrar, actualizar y eliminar productos del inventario. Las características de este tipo de usuario son bastante diversas e inciertas.
+
+En general, los usuarios y sus características son muy diversos, pero a grandes rasgos el sistema no será exigente con ellos, porque será diseñado con una interfaz intuitiva y de fácil manejo. Basta con tener conocimientos básicos en el ámbito digital y el manejo de dispositivos electrónicos.
+
+3. Requisitos del Proyecto 
+3.1	Requisitos funcionales 
+En esta sección se definen las acciones fundamentales que debe realizar el sistema cuando recibe la información, la procesa y produce resultados. Cada requisito se plantea como una funcionalidad esencial del software, organizada en subapartados para mayor claridad.
+3.1.1	Visualización de productos.
+El sistema permitirá mostrar la información completa de cada producto almacenado en el inventario, incluyendo: nombre, número de serie, cantidad disponible, precio unitario, fechas de recepción y vencimiento, categoría asignada.
+3.1.2	Perfiles de usuario.
+El sistema contará con distintos perfiles de usuario (administrador, gerente de bodega, cajero, bodeguero, organizador) con permisos diferenciados. Cada perfil podrá acceder únicamente a las funciones que correspondan a su rol.
+3.1.3	Ubicación de productos.
+El sistema permitirá registrar y visualizar la ubicación de los productos dentro de la bodega, facilitando así su búsqueda y organización.
+
+
+3.1.4	Cálculo de inventario total.
+El sistema podrá calcular la cantidad total de productos y el valor monetario total del inventario en tiempo real.
+3.1.5	Modificación de datos.
+El sistema ofrecerá la posibilidad de editar cualquier aspecto de los datos de un producto (cantidad, precio, descuentos, fechas, ubicación), siempre que el usuario tenga el permiso adecuado.
+3.1.6	Ingreso de productos.
+El sistema podrá registrar nuevos productos mediante: lectura de código de barra o QR e ingreso manual de datos.
+3.1.7	Registro de movimientos.
+El sistema almacenará un historial de entradas y salidas de productos, manteniendo un control trazable de los movimientos en el inventario.	
+3.1.8	Alertas automáticas de stock bajo.
+El sistema generará notificaciones automáticas cuando el nivel de stock de un producto esté por debajo del mínimo definido, para la reposición oportuna.
+3.1.9	Acceso multiplataforma.
+El sistema será accesible desde dispositivos móviles (Android/iOS), laptops y tablets, a través de aplicación o página web.
+
+
+
+
+3.2	Requisitos no funcionales 
+3.2.1	Requisitos de rendimiento
+El sistema debe ser capaz de manejar un crecimiento progresivo en la cantidad de productos y usuarios sin pérdida significativa de rendimiento.
+El 95% de las operaciones de consulta de productos deberán completarse en menos de 10 segundos.
+El sistema debe permitir al menos 20 usuarios concurrentes en tiempo real sin afectar la experiencia de uso.
+3.2.2	Seguridad
+Los permisos diferenciados de usuario deben estar protegidos con autenticación segura.
+Las contraseñas deben almacenarse de forma segura, logrando un acceso rápido y privado.
+El sistema debe contar con un registro de actividad que almacene acciones críticas, como modificaciones en inventario, entradas y salidas de productos.
+Se deben implementar verificaciones de integridad en la información crítica del inventario para prevenir modificaciones accidentales o maliciosas.
+
+3.3	Otros Requisitos
+3.3.1 Interfaces externas.
+La aplicación/página web debe ser compatible con los navegadores más utilizados y con dispositivos móviles (Chrome, laptops, tablets).
+Debe permitir la integración con periféricos de lectura de códigos de barras y QR.
+
+
+3.3.2 Restricciones.
+El sistema debe desarrollarse utilizando lenguajes que garanticen mantenibilidad y escalabilidad a futuro.
+El sistema debe adaptarse a distintos tamaños de pantalla mediante diseño responsivo.
+
+3.3.3 Requisitos de datos.
+Los datos de cada producto deberán permitir introducir texto, números y fechas.
+El sistema debe soportar valores por defecto (ejemplo: cantidad inicial = 0, precio inicial = $0.
+El formato de las fechas será DD/MM/YYYY.
+
+
+
+
+
+
+
+
+
+
+
+
+
+4. Propuesta de Planificación   
+4.1 Definición del Equipo de Trabajo  
+Product Owner (PO): Su rol principal es representar la voz del cliente y asegurar que el producto entregue valor. 
+Sus responsabilidades son:
+Definir y priorizar las funcionalidades en el product backlog.
+Se encargará de recolectar y analizar los requerimientos de los usuarios finales.
+Se debe asegurar de que el equipo entienda la visión del producto (el objetivo del inventario).
+Es quien decide que se desarrolla en cada sprint, esto lo hace en conjunto con el equipo, pero es quien tiene la última palabra.
+Se encargará de validar los incrementos otorgados y dar feedback.
+
+Scrum Master (SM): Su rol principal es ser el facilitador del marco de trabajo Scrum y dar apoyo al equipo.
+Sus responsabilidades son:
+Debe asegurar que el equipo siga la metodología ágil (Scrum).
+Es quien debe asegurarse de eliminar impedimentos que surjan y afecten al Development Team.
+Es quien organiza y facilita las reuniones Scrum (Daily, Sprint Planning, Review, Retrospective).
+Se encarga de fomentar la colaboración y comunicación entre todos los miembros del equipo.
+Tiene el deber de promover la mejora continua del equipo de trabajo.
+
+
+Development Team: El rol de este equipo es estar encargado de construir el producto.
+Sus responsabilidades son:
+Deben desarrollar las funcionalidades definidas en el Sprint Backlog.
+Se encargan de desarrollar, programar, probar y documentar lo que sería en este caso el software de inventario.
+Estimar el esfuerzo de cada tarea de manera precisa y detallada para asegurar una planificación efectiva.
+Trabajar de manera autoorganizada y colaborativa.
+Se deben asegurar de la calidad del producto a entregar (testing, revisiones de código, etc).
+
+
+
+
+
+
+
+
+
+
+
+
+5. Definición de Historias de Usuario
+5.1 Historias de Usuario 
+Como bodeguero, quiero contar con la opción de ingresar y editar los datos de forma manual cuando sea necesario, para actualizar la información del inventario de manera precisa, registrar las cantidades disponibles, ajustar fechas relevantes y modificar la ubicación dentro de la bodega, asegurando así que cada movimiento quede correctamente documentado y que los registros operativos reflejen fielmente la realidad diaria del almacén.
+
+
+Como encargado de inventario, quiero que el sistema cuente con un módulo específico para registrar y gestionar las pérdidas de inventario, es decir, eliminar productos del inventario, además de información complementaria como el producto afectado, la cantidad, junto con observaciones adicionales, motivo (por qué se perdió el producto) y responsable de cada evento para que se puedan generar reportes de control que me permitan tomar decisiones informadas y reducir pérdidas futuras.
+Como vendedor independiente, quiero registrar, modificar y eliminar fácilmente el estado de mis productos, el stock disponible y las actualizaciones recientes, mediante una interfaz clara e intuitiva, para mantener un control eficiente de mi negocio sin necesidad de conocimientos avanzados en sistemas, evitar quiebres de stock y tomar decisiones rápidas que favorezcan la continuidad de mis ventas.
+
+
+
+
+
+
+
+
+
+
+6. Definición del Product Backlog Priorizado 
+6.1 Product Backlog Priorizado
+Esta fue la primera idea sobre el Product backlog, pensando en las ideas que abarcaran todo lo que debíamos hacer, en este punto solo son ideas algo generales y no tienen ningún tipo de orden
+
+Como usuario necesito una organización de los productos
+Como usuario necesito información de los productos
+Como usuario necesito información del total de productos, junto con su costo total
+Como usuario necesito tener facilidad en la organización del inventario
+Como usuario necesito recibir notificaciones cuando el stock de un producto esté bajo
+Como usuario necesito poder asignar roles y permisos
+Como usuario necesito tener un registro de los productos 
+Como usuario necesito tener acceso multiplataforma
+Como usuario necesito poder realizar lectura de códigos de barras y QR.
+Como usuario necesito poder ingresar los productos
+Como usuario necesito poder eliminar los productos
+Como usuario necesito ingresar a mi perfil de usuario
+Como usuario necesito filtrar y ordenar la lista de productos por categoría, nombre y stock
+
+	
+
+
+
+
+7. Refinamiento del Product Backlog 
+7.1 Product Backlog Refinado
+En este apartado, con conversaciones entre el grupo, se llegó a el orden presente debajo, junto con algunos refinamientos en las instrucciones a realizar, para que sea algo mas especifico y se pueda entender de mejor manera. En este punto las cosas a realizar están en orden y separadas en 2 Sprint.
+7.1.1 Primer Sprint
+Como usuario, necesito entrar a la página, con un nombre de usuario.
+Como usuario necesito agregar productos de forma manual (nombre, precio, categoría, ubicación, descripción), dentro de la página.
+Como usuario necesito poder tener una vista simple de los productos (lista simple)
+Como usuario necesito eliminar productos del inventario que no me sean necesarios (junto con todo lo que tenga el producto).
+Como usuario, necesito contar con un registro de entrada, salida y eliminación de los productos del inventario (fecha, cantidad, nombre).
+Como usuario, necesito tener una vista ordenada mediante filtros por categoría.
+Como usuario necesito el número del total de productos, junto con su costo total.
+Como usuario, necesito poder modificar cualquier aspecto de los datos del inventario (cantidad, precios, etc).
+Como usuario necesito una alerta de bajo stock dentro de la página.
+
+
+
+
+
+7.1.2 Segundo Sprint
+Como usuario necesito que el inventario esté enlazado a una base de datos.
+Como usuario, necesito tener mi perfil único de ingreso a la página.
+Como usuario necesito que los registros muestren quien realizó cada cambio, junto con un registro de las ediciones que se vayan haciendo.
+Como usuario, necesito recibir una alerta a mi Gmail cuando el stock de un producto esté bajo, para reponerlo a tiempo.
+Como usuario necesito tener acceso multiplataforma.
+
+8. Estimación de Esfuerzo de las Tareas 
+8.1 Estimación de Esfuerzo de las Tareas 
+Estas estimaciones se harán en relación a la técnica de las tallas de las poleras (T- Shirt Size)
+XS -> Muy simple, casi sin riesgo    S -> Simple, poco esfuerzo      M -> Complejidad media     
+L -> Compleja, requiere varios pasos    XL -> Muy compleja, requiere investigación o mucho desarrollo
+8.1.1 Estimación 1er Sprint
+Ingreso página -> Talla S
+Se ingresa a la página mediante un nombre de usuario escrito por este mismo.
+Implica una interfaz de página web, con la opción de ingresar un texto relacionado al nombre, antes de entrar a la página. Baja complejidad.
+
+
+
+
+Agregar producto -> Talla S
+Permitir al usuario ingresar nuevos productos de forma manual.
+Implica crear un formulario, validar campos básicos (nombre, categoría, etc.). Su complejidad es baja por tratarse de un proceso estándar de inserción.
+
+Visualizar producto -> Talla S
+Mostrar una lista general de productos registrados.
+Solo requiere consulta a la base de datos y renderizado en interfaz, sin lógica adicional o filtrado complejo. Baja complejidad.
+
+Eliminar producto -> Talla M   
+Permitir eliminar productos existentes junto con su información asociada.
+Incluye operaciones de borrado con verificación previa, control de integridad referencial y manejo de confirmaciones. Nivel medio de complejidad por los posibles efectos en registros relacionados. (integridad referencial -> relaciones entre tablas de base de datos sean validas)
+
+Registros de movimientos -> Talla M 
+Registrar la entrada, salida y eliminación de productos, indicando fecha, cantidad y nombre.
+Requiere actualizar el estado del producto y almacenar los registros de movimiento en la base de datos. Complejidad media por la necesidad de mantener coherencia en el inventario, aunque sin manejo de transacciones financieras.
+
+Vista ordenada -> Talla M
+Implementar filtros dinámicos para visualizar productos según categorías. (filtros dinámicos: Poder filtrar por lo que se seleccione, sin recargar la página)
+Requiere consultas filtradas a la base de datos y ajustes en la interfaz. Complejidad media por manejo de parámetros y actualización dinámica.
+
+Número y costo total -> Talla S
+Calcular y mostrar el total de productos y su costo global.
+Se realiza mediante funciones agregadas y un pequeño componente visual. Baja complejidad.
+
+Edición datos -> Talla M
+Permitir edición de datos existentes en la base de datos.
+Implica formularios editables, validación y actualización. Complejidad media.
+
+Alerta de bajo stock -> Talla S
+Generar notificaciones cuando el stock de un producto esté bajo un umbral definido.
+Implica lógica de verificación automática, comparación de valores.
+
+
+
+8.1.2 Estimación 2do Sprint
+
+Relación base de datos -> Talla L
+Implementar la conexión entre la página y una base de datos para almacenar y consultar la información de productos, usuarios, movimientos, etc.
+Requiere definir el modelo de datos, crear consultas CRUD, manejar integridad referencial y establecer la conexión entre el backend y la base de datos. Alta complejidad técnica, ya que todas las funciones dependen de esta capa.
+
+
+
+
+Inicio sesión de usuarios -> Talla M  
+Implementar autenticación mediante credenciales de usuario. Validación de datos y conexión a base de datos
+Requiere desarrollo de lógica de validación, manejo de sesiones y comunicación con el “backend” para verificar credenciales. Tiene complejidad media por aspectos de seguridad y control de flujo.
+
+Permisos según perfil -> Talla S
+Implementar permisos mediante perfiles de usuario.  Mediante la conexión a base de datos
+Requiere manejo de permisos y comunicación con el “backend” para verificar su correcta implementación y diferencias de cada uno. Tiene complejidad media por aspectos de seguridad y control de flujo.
+
+Mejora registros -> Talla M
+Los registros mostrarán como información adicional, las ediciones que realizan a cada producto, junto con quien realizó cada movimiento en los registros.
+Implica modificar las tablas existentes para incluir campos de seguimiento y actualizar la lógica de inserción/edición para guardar dicha información. Complejidad media por la necesidad de mantener trazabilidad sin afectar el rendimiento.
+
+Notificación Gmail (opcional)-> Talla L
+Se le notifica al usuario según el perfil, por medio de Gmail sobre un Stock bajo.
+Requiere desarrollar lógica de verificación periódica o por evento para comparar las cantidades de stock, integración con el servicio de correo (API de Gmail o SMTP), configuración de autenticación segura, manejo de errores y pruebas de envío. La complejidad aumenta por la necesidad de interacción con un servicio externo y la gestión de credenciales.
+
+Acceso multiplataforma (opcional) -> Talla L
+Habilitar uso del sistema desde distintos dispositivos (Web, Móvil, Tablet).
+Requiere diseño adaptable, pruebas en distintas resoluciones y optimización de interfaz. Complejidad alta.
+
+9. Documentación de los eventos
+
+9.1 Documentación de Sprint Planning. 
+Corrección y replanteamiento de las tareas a realizar en el Sprint 2
+Asegurar comprensión de objetivos 
+cambios en las tareas a realizar (historias de usuario, dividir inicio sesión)
+Ir actualizando el Jira
+Agendar reuniones
+reparticiones más equitativas del trabajo
+
+9.2 Documentación de Sprint Daily. 
+En reuniones han aparecido planificaciones, preguntas individuales, asegurarse de la presencia de todo el grupo y la disposición de apoyo en el grupo.
+En reunión del martes 25 de noviembre, se mostraron inconvenientes a la hora de relacionar el proyecto con la base de datos SQLite. Cada integrante modifica su diapositiva con la información que encuentre pertinente.
+
+
+
+
+
+9.3 Documentación de Sprint Review. 
+Logros:
+Se realizaron más de las actividades a realizar el en Sprint 1, llegando a completar algunas del Sprint 2 y en un corto periodo de tiempo.
+
+Errores:
+Desorden en la asignación de tareas
+Gran carga a un integrante
+Desactualización de información con Jira
+Pocas reuniones
+
+Inconvenientes: 
+Coincidir y ajustar horarios
+Poco conocimiento, desembocando en poca participación
