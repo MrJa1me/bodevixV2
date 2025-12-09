@@ -1,71 +1,68 @@
-Bodevix - Demo local
+Bodevix - Demo web
 
 Descripción:
-Aplicación web simple (front-end) para gestionar un inventario localmente usando localStorage. Cubre historias básicas: login (perfil simple), agregar/editar/eliminar productos, registrar movimientos de entrada/salida, filtros por categoría, vista lista, totales y alertas de stock bajo.
+Aplicación web de gestión de inventario (Express + SQLite + Sequelize) con frontend estático (Bootstrap + Chart.js). Incluye autenticación simple, roles y permisos, historial de movimientos y visualizaciones (dashboard).
 
-Cómo usar:
-1. Backend + Frontend (modo desarrollo con Node):
-
-    - Nota: esta versión no usa archivos `.env`. Si quieres sobrescribir valores puedes exportar variables de entorno en tu entorno de ejecución (por ejemplo PORT, JWT_SECRET).
-    - Instala dependencias:
+**Cómo usar**
+- **Instalar dependencias:**
 
 ```powershell
 npm install
 ```
 
-    - Inicia el servidor en modo desarrollo (nodemon):
+- **Sembrar y ejecutar (desarrollo, reinicia la DB):**
 
 ```powershell
+# ESTE SCRIPT RECREA LA DB (usa sync({force:true}))
+node .\scripts\seedUsersAndProducts.js
 npm run dev
 ```
 
-    - Abre http://localhost:3000 en tu navegador.
+- **Alternativa no destructiva:**
+  - Si no quieres reiniciar la BD, usa los scripts no destructivos adicionales:
+    - `scripts/assignCreators.js` — asigna `usuarioCreadorId` a productos que lo faltan (no reinicia DB).
+    - `scripts/seedHistorialMovements.js` — genera movimientos de historial (no reinicia DB).
 
-Características implementadas:
-- Login básico (se guarda el nombre de usuario en localStorage).
-- CRUD de productos (id, nombre, categoría, cantidad, precio, ubicación, descripción, umbral de alerta).
-- Filtros por categoría y búsqueda por nombre/descripción.
-- Registro de movimientos (entradas/salidas) y historial.
-- Totales: número total de unidades y costo total.
-- Alerta visual para productos con stock por debajo del umbral.
+**Scripts añadidos**
+- `scripts/seedUsersAndProducts.js` — crea roles/usuarios legibles (admin, juan, ana, maria, lector), ubicaciones, categorías y productos; asigna `usuarioCreadorId` y registra entradas en `Historial`.
+- `scripts/assignCreators.js` — asigna `usuarioCreadorId` a productos existentes que no lo tengan (usa un usuario Admin si hace falta).
+- `scripts/seedHistorialMovements.js` — crea movimientos de historial aleatorios (entradas, salidas, ajustes) y actualiza las cantidades de productos.
 
-Limitaciones y siguientes pasos:
-- Esta es una app puramente cliente; para multiusuario real o persistencia compartida necesitarás un backend.
-- Se pueden añadir export/import CSV, autenticación real, y tests.
+**Endpoints útiles**
+- `GET /api/products` — lista productos activos.
+- `POST /api/products` — crear producto (solo Admin).
+- `PUT /api/products/:id` — actualizar producto.
+- `DELETE /api/products/:id` — eliminar (soft-delete) o registrar salida parcial según rol.
+- `GET /api/historial` — ver historial de movimientos.
 
-Comprobación rápida de la autenticación JWT:
+**Roles y permisos (resumen)**
+- `Admin`: puede crear/reactivar/eliminar productos, gestionar roles/usuarios y ver todo.
+- `Bodeguero`: puede añadir stock a productos existentes, pero solo si esos productos fueron creados por un Admin.
+- `Encargado de inventario`: puede registrar salidas parciales (con razón) y ver dashboard/historial; también sólo sobre productos creados por Admin.
+- `Vendedor independiente`: permisos cercanos a Admin excepto gestionar roles/usuarios.
+- `Lector`: solo visualización.
 
-1. Registra un usuario con POST /api/auth/register (puedes usar una herramienta como Postman o curl).
-2. Llama POST /api/auth/login con username/password, recibirás { token, perfil }.
-3. Guarda el token y llama GET /api/auth/me o GET /api/products con header Authorization: Bearer <token> para verificar el acceso protegido.
+**Notas móviles**
+- Interfaz adaptativa: añadí mejoras CSS para móviles (badges en navbar, canvases responsivos, modales casi fullscreen). El menú Admin dentro del toggle está mostrado como lista apilada en móviles para facilitar el acceso.
 
-Ejemplos (curl) rápidos:
+**Precauciones**
+- Muchos scripts de seed usan `connectDB(models)` que ejecuta `sync({ force: true })` y recrea la base de datos. Haz copia de `bodega.sqlite` si quieres preservar datos.
+- Los scripts que no recrean la DB (`assignCreators.js`, `seedHistorialMovements.js`) solo actualizan datos existentes.
 
-1) Registrar usuario (crear primer usuario):
+**Cómo probar en teléfono**
+1. Ejecuta el servidor en tu PC: `npm run dev`.
+2. Encuentra la IP local de tu PC (ej. `192.168.1.50`) y abre en el teléfono: `http://192.168.1.50:3000`.
+3. Usa las credenciales creadas por el seed (`admin`, `juan`, `ana`, `maria`, `lector`) para probar roles.
 
-```bash
-curl -X POST http://localhost:3000/api/auth/register \
-    -H "Content-Type: application/json" \
-    -d '{"username":"admin","password":"changeme","perfil":"admin"}'
+**Ejecutar solo historial (ejemplo)**
+```powershell
+# Genera 30 movimientos en el historial y actualiza cantidades
+node .\scripts\seedHistorialMovements.js
 ```
 
-2) Login + obtener token:
+**Sugerencias / mejoras futuras**
+- Añadir un script no destructivo para sincronizar permisos/roles en bases existentes.
+- Mostrar el `creador` en la vista de producto en el frontend.
+- Añadir tests automáticos y un pipeline de CI.
 
-```bash
-curl -X POST http://localhost:3000/api/auth/login \
-    -H "Content-Type: application/json" \
-    -d '{"username":"admin","password":"changeme"}'
-
-# Respuesta: { "token": "<JWT>", "perfil":"admin" }
-```
-
-3) Llamar a /api/auth/me o a /api/products con el token:
-
-```bash
-curl http://localhost:3000/api/auth/me -H "Authorization: Bearer <JWT>"
-curl http://localhost:3000/api/products -H "Authorization: Bearer <JWT>"
-```
-
-
-
-Créditos: Proyecto de ejemplo "Bodevix".
+Créditos: Proyecto de ejemplo "Bodevix" — Nicolás Guajardo y colaboradores.

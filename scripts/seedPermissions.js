@@ -4,11 +4,13 @@
 const permisosBase = [
     { nombre: 'Ver Dashboard', descripcion: 'Permite visualizar el dashboard principal.' },
     { nombre: 'Gestionar Productos', descripcion: 'Permite crear, editar y eliminar productos.' },
+    { nombre: 'Sacar Productos', descripcion: 'Permite registrar salidas/parciales de cantidad de productos sin eliminar el registro.' },
     { nombre: 'Gestionar Usuarios', descripcion: 'Permite crear, editar y eliminar usuarios y sus roles.' },
     { nombre: 'Gestionar Roles', descripcion: 'Permite ver y asignar permisos a los roles.' },
     { nombre: 'Gestionar Ubicaciones', descripcion: 'Permite administrar las ubicaciones del inventario.' },
     { nombre: 'Ver Historial', descripcion: 'Permite ver el historial de movimientos de inventario.' },
-    { nombre: 'Resolver Alertas', descripcion: 'Permite marcar las alertas de stock como resueltas.' }
+    { nombre: 'Resolver Alertas', descripcion: 'Permite marcar las alertas de stock como resueltas.' },
+    { nombre: 'Añadir Stock', descripcion: 'Permite añadir stock a productos existentes (vista simplificada).' }
 ];
 
 async function seedPermissions(Permiso) {

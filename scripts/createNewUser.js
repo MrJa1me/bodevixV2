@@ -1,6 +1,7 @@
 // scripts/createNewUser.js
 
-const { connectDB, Usuario, Role, sequelize } = require('../src/config/database');
+const { connectDB, sequelize } = require('../src/config/database');
+const { Usuario, Role } = require('../src/models');
 
 async function createNewUser(username, roleName) {
     try {

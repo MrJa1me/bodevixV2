@@ -4,6 +4,7 @@ const express = require('express');
 const path = require('path');
 const os = require('os');
 const { connectDB } = require('./src/config/database');
+const models = require('./src/models'); // <-- 1. Importar los modelos
 const authRoutes = require('./src/routes/auth');
 const productRoutes = require('./src/routes/products');
 const userRoutes = require('./src/routes/users');
@@ -13,8 +14,8 @@ const categoryRoutes = require('./src/routes/categories');
 const locationRoutes = require('./src/routes/locations');
 const roleRoutes = require('./src/routes/roles');
 
-// 1. Iniciar la base de datos
-connectDB(); 
+// 1. Iniciar la base de datos, pasando los modelos para el sembrado
+connectDB(models); 
 
 const app = express();
 const PORT = process.env.PORT || 3000;

@@ -1,6 +1,6 @@
 // src/controllers/userController.js
 
-const { Usuario, Role } = require('../config/database');
+const { Usuario, Role } = require('../models');
 
 // Obtener todos los usuarios (SOLO ADMIN)
 exports.getAllUsers = async (req, res) => {

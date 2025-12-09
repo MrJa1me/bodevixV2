@@ -1,5 +1,5 @@
 // src/controllers/permisoController.js
-const { Permiso } = require('../config/database');
+const { Permiso } = require('../models');
 
 /**
  * @description Obtiene todos los permisos de la base de datos.

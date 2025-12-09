@@ -1,6 +1,7 @@
 // scripts/updateAdminRole.js
 
-const { connectDB, Usuario, sequelize } = require('../src/config/database');
+const { connectDB, sequelize } = require('../src/config/database');
+const { Usuario } = require('../src/models');
 
 async function updateRoleToAdmin(usernameToUpdate) {
     try {

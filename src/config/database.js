@@ -1,89 +1,43 @@
 // src/config/database.js
 
 const { Sequelize } = require('sequelize');
-const path = require('path'); // Import the 'path' module
+const path = require('path');
 
-// Importar las funciones que definen los modelos
-const createProductoModel = require('../models/Producto');
-const createUsuarioModel = require('../models/Usuario');
-const createHistorialModel = require('../models/Historial');
-const createAlertaModel = require('../models/Alerta');
-const createRoleModel = require('../models/Role');
-const createPermisoModel = require('../models/Permiso');
-const createRolePermisoModel = require('../models/RolePermiso'); // <-- NUEVO
-const createCategoriaModel = require('../models/Categoria');
-const createUbicacionModel = require('../models/Ubicacion');
-
-// Determine the absolute path for the SQLite database file
 const dbPath = path.resolve(__dirname, '../../bodega.sqlite');
 
-// 1. Configuración de Sequelize para SQLite
+// 1. Configuración y exportación de la instancia de Sequelize
 const sequelize = new Sequelize({
   dialect: 'sqlite',
   storage: dbPath,
-  logging: false
+  logging: false,
 });
 
-// 2. Definir los modelos usando la instancia de sequelize
-const Producto = createProductoModel(sequelize);
-const Usuario = createUsuarioModel(sequelize);
-const Historial = createHistorialModel(sequelize);
-const Alerta = createAlertaModel(sequelize);
-const Role = createRoleModel(sequelize);
-const Permiso = createPermisoModel(sequelize);
-const RolePermiso = createRolePermisoModel(sequelize); // <-- NUEVO
-const Categoria = createCategoriaModel(sequelize);
-const Ubicacion = createUbicacionModel(sequelize);
-
-// 3. Función de autenticación y sincronización
-async function connectDB() {
+// 2. Función de autenticación y sincronización
+// Acepta los modelos como argumento para poder realizar el sembrado.
+async function connectDB(models) {
   try {
     await sequelize.authenticate();
     console.log('✅ Conexión con SQLite establecida correctamente.');
     console.log(`ℹ️ La base de datos SQLite se encuentra en: ${dbPath}`);
 
-    // --- Definición centralizada de asociaciones ---
-    Producto.belongsTo(Usuario, { foreignKey: 'usuarioUltimaEdicionId', as: 'editor' });
-    Producto.hasMany(Historial, { foreignKey: 'productoId', as: 'historial', onDelete: 'SET NULL' });
-    Producto.hasMany(Alerta, { foreignKey: 'productoId', as: 'alertas', onDelete: 'CASCADE' });
-
-    Usuario.hasMany(Historial, { foreignKey: 'usuarioId', as: 'actividades' });
-    Usuario.belongsTo(Role, { foreignKey: 'roleId', as: 'role' });
-    Role.hasMany(Usuario, { foreignKey: 'roleId', as: 'usuarios' });
-
-    Historial.belongsTo(Usuario, { foreignKey: 'usuarioId', as: 'usuario' });
-    Historial.belongsTo(Producto, { foreignKey: 'productoId', as: 'producto', onDelete: 'SET NULL' });
-    
-    Alerta.belongsTo(Producto, { foreignKey: 'productoId', as: 'producto', onDelete: 'CASCADE' });
-    
-    Producto.belongsTo(Categoria, { foreignKey: 'categoriaId', as: 'categoria' });
-    Producto.belongsTo(Ubicacion, { foreignKey: 'ubicacionId', as: 'ubicacion' });
-
-    Categoria.hasMany(Producto, { foreignKey: 'categoriaId', as: 'productos' });
-    Ubicacion.hasMany(Producto, { foreignKey: 'ubicacionId', as: 'productos' });
-
-    // ASOCIACIÓN ACTUALIZADA para usar el modelo explícito y con alias
-    Role.belongsToMany(Permiso, { through: RolePermiso, as: 'permisos', foreignKey: 'roleId' });
-    Permiso.belongsToMany(Role, { through: RolePermiso, as: 'roles', foreignKey: 'permisoId' });
+    // La configuración de asociaciones se hace ahora en models/index.js
     console.log('✅ Asociaciones de modelos configuradas.');
 
-    // Desactivar temporalmente constraints para permitir a Sequelize sincronizar
     await sequelize.query('PRAGMA foreign_keys = OFF;');
     console.log('ℹ️  Comprobaciones FOREIGN KEY desactivadas para sincronización.');
 
-    // Sincronización de modelos (crea o actualiza tablas)
-    await sequelize.sync({ alter: true });
+    await sequelize.sync({ force: true });
     console.log('✅ Tablas sincronizadas con la base de datos.');
-    
-    // Reactivar constraints de foreign key
+
     await sequelize.query('PRAGMA foreign_keys = ON;');
     console.log('ℹ️  Comprobaciones FOREIGN KEY reactivadas.');
 
-    // --- SEMBRADO DE PERMISOS ---
+    // --- SEMBRADO DE DATOS (ahora depende de los modelos pasados como argumento) ---
+    const { Permiso, Role, Usuario } = models;
+    
     const { seedPermissions } = require('../../scripts/seedPermissions');
     await seedPermissions(Permiso);
 
-    // --- Inserción de roles por defecto (después de sync) ---
     const defaultRoles = [
       { nombre: 'Admin', descripcion: 'Administrador con acceso total' },
       { nombre: 'Bodeguero', descripcion: 'Puede gestionar cantidades de productos' },
@@ -103,33 +57,24 @@ async function connectDB() {
     }
     console.log('✅ Roles por defecto verificados/creados.');
 
-    // --- Inserción del usuario admin por defecto ---
-    console.log('ℹ️  Verificando usuario admin por defecto...');
     const adminRole = await Role.findOne({ where: { nombre: 'Admin' } });
     if (adminRole) {
       const [adminUser, created] = await Usuario.findOrCreate({
         where: { username: 'admin' },
-        defaults: {
-          roleId: adminRole.id
-        }
+        defaults: { roleId: adminRole.id },
       });
       if (created) {
         console.log(`➕ Usuario 'admin' con rol de 'Admin' creado.`);
-      } else {
-        // Opcional: asegurarse de que el usuario admin siempre tenga el rol de Admin
-        if (adminUser.roleId !== adminRole.id) {
-          adminUser.roleId = adminRole.id;
-          await adminUser.save();
-          console.log(`🔄 Rol del usuario 'admin' actualizado a 'Admin'.`);
-        }
+      } else if (adminUser.roleId !== adminRole.id) {
+        adminUser.roleId = adminRole.id;
+        await adminUser.save();
+        console.log(`🔄 Rol del usuario 'admin' actualizado a 'Admin'.`);
       }
     } else {
       console.warn('⚠️  No se encontró el rol "Admin", no se pudo crear el usuario admin por defecto.');
     }
     console.log('✅ Usuario admin verificado/creado.');
 
-    // --- Asignación de todos los permisos al rol de Admin ---
-    console.log('ℹ️  Asignando permisos al rol de Admin...');
     if (adminRole) {
       const allPermissions = await Permiso.findAll();
       const adminPermissions = await adminRole.getPermisos();
@@ -141,17 +86,20 @@ async function connectDB() {
       }
     }
 
-    // --- Asignación de permisos por defecto a otros roles ---
-    console.log('ℹ️  Asignando permisos por defecto a otros roles...');
     const defaultRolePermissions = {
-      'Bodeguero': ['Gestionar Productos', 'Ver Historial', 'Ver Dashboard', 'Resolver Alertas'],
-      'Encargado de inventario': ['Gestionar Productos', 'Gestionar Ubicaciones', 'Ver Historial', 'Ver Dashboard', 'Resolver Alertas'],
-      'Vendedor independiente': ['Ver Dashboard'],
-      'Lector': ['Ver Dashboard', 'Ver Historial']
+      // Admin tendrá permisos de gestión completos (crear, editar, eliminar)
+      'Admin': ['Gestionar Productos', 'Gestionar Ubicaciones', 'Gestionar Usuarios', 'Gestionar Roles', 'Ver Dashboard', 'Ver Historial', 'Resolver Alertas', 'Añadir Stock'],
+      // Bodeguero solo puede añadir stock a productos existentes y ver dashboard/historial
+      'Bodeguero': ['Añadir Stock', 'Ver Historial', 'Ver Dashboard'],
+      // Encargado de inventario puede registrar salidas parciales (sacar cantidad) y ver dashboard/historial
+      'Encargado de inventario': ['Sacar Productos', 'Ver Historial', 'Ver Dashboard'],
+      // Vendedor independiente: casi Admin, pero sin gestión de roles ni usuarios
+      'Vendedor independiente': ['Gestionar Productos', 'Gestionar Ubicaciones', 'Ver Dashboard', 'Ver Historial', 'Resolver Alertas', 'Añadir Stock'],
+      'Lector': ['Ver Dashboard', 'Ver Historial'],
     };
 
     const allRoles = await Role.findAll();
-    const allPermissionsList = await Permiso.findAll(); // Renamed to avoid conflict
+    const allPermissionsList = await Permiso.findAll();
 
     for (const roleName in defaultRolePermissions) {
       const role = allRoles.find(r => r.nombre === roleName);
@@ -167,25 +115,14 @@ async function connectDB() {
       }
     }
 
-
-
   } catch (error) {
     console.error('❌ Error al conectar o sincronizar la base de datos:', error);
-    process.exit(1); 
+    process.exit(1);
   }
 }
 
-// 4. Exportar todo lo necesario
+// 3. Exportar solo la instancia y la función de conexión
 module.exports = {
   sequelize,
   connectDB,
-  Producto,
-  Usuario,
-  Historial,
-  Alerta,
-  Role,
-  Permiso,
-  RolePermiso, // <-- NUEVO
-  Categoria,
-  Ubicacion
 };

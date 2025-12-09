@@ -1,6 +1,6 @@
 // src/controllers/historialController.js
 
-const { Historial, Usuario, Producto } = require('../config/database');
+const { Historial, Usuario, Producto } = require('../models');
 
 // Obtener todo el historial de acciones (READ)
 exports.getHistory = async (req, res) => {

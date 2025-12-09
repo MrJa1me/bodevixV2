@@ -1,4 +1,4 @@
-const { Usuario, Role, RolePermiso, Permiso } = require('../config/database');
+const { Usuario, Role, RolePermiso, Permiso } = require('../models');
 
 // Tarea 1: Registro (para crear usuarios de prueba)
 // Se ha simplificado para no usar contraseñas.
@@ -45,10 +45,10 @@ exports.me = async (req, res) => {
     try {
       const rolePermissions = await RolePermiso.findAll({
         where: { roleId: req.user.role.id },
-        include: [{ model: Permiso, attributes: ['nombre'] }]
+        include: [{ model: Permiso, as: 'permiso', attributes: ['nombre'] }]
       });
       // Extraemos solo los nombres de los permisos
-      permissions = rolePermissions.map(rp => rp.Permiso.nombre);
+      permissions = rolePermissions.map(rp => rp.permiso.nombre);
     } catch (error) {
       console.error("Error al obtener los permisos del rol:", error);
       // Opcional: podrías devolver un 500 aquí si los permisos son críticos
@@ -56,10 +56,8 @@ exports.me = async (req, res) => {
   }
   
   // Devuelve la información del usuario incluyendo sus permisos
-  res.json({ 
-    id: req.user.id, 
-    username: req.user.username, 
-    role: req.user.role ? req.user.role.nombre : 'No asignado',
-    permissions: permissions // Array con los nombres de los permisos
-  });
-};
+          res.json({
+              id: req.user.id,
+              username: req.user.username,
+              role: req.user.role // Enviar el objeto de rol completo
+          });};

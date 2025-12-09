@@ -24,12 +24,18 @@ module.exports = (sequelize) => {
       // La referencia se definirá en database.js
     },
     umbral: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+    activo: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
 
     // --- Campos para Trazabilidad (Mejora Registros - Talla M) ---
     // ID del usuario que realizó el último cambio
     usuarioUltimaEdicionId: {
       type: DataTypes.INTEGER,
       // La referencia del modelo se establece al definir las asociaciones
+    },
+    // ID del usuario que creó originalmente el producto
+    usuarioCreadorId: {
+      type: DataTypes.INTEGER,
+      allowNull: true
     },
     fechaUltimaEdicion: {
       type: DataTypes.DATE,

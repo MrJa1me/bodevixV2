@@ -1,6 +1,6 @@
 // src/controllers/productController.js
 
-const { Producto, Historial, Categoria, Ubicacion } = require('../config/database');
+const { Producto, Historial, Categoria, Ubicacion, Usuario } = require('../models');
 const { checkAndCreateLowStockAlert } = require('./alertController');
 
 // Obtener todos los productos (READ)
@@ -10,6 +10,7 @@ exports.getAllProducts = async (req, res) => {
     }
     try {
         const productos = await Producto.findAll({
+            where: { activo: true },
             include: [
                 { model: Categoria, as: 'categoria' },
                 { model: Ubicacion, as: 'ubicacion' }
@@ -33,8 +34,17 @@ exports.createProduct = async (req, res) => {
     try {
         if (userRole === 'Bodeguero') {
             const productoExistente = await Producto.findOne({ where: { nombre } });
-            if (!productoExistente) {
-                return res.status(404).json({ msg: `Producto con nombre "${nombre}" no encontrado.` });
+            if (!productoExistente || !productoExistente.activo) {
+                return res.status(404).json({ msg: `Producto con nombre "${nombre}" no encontrado o inactivo.` });
+            }
+            // Only allow bodegueros to modify products originally created by an Admin
+            if (productoExistente.usuarioCreadorId) {
+                const creador = await Usuario.findByPk(productoExistente.usuarioCreadorId, { include: ['role'] });
+                if (!creador || !creador.role || creador.role.nombre !== 'Admin') {
+                    return res.status(403).json({ msg: 'Solo se puede operar sobre productos creados por un Admin.' });
+                }
+            } else {
+                return res.status(403).json({ msg: 'Producto sin creador registrado. Solo Admin puede operar.' });
             }
             const cantidadAnterior = productoExistente.cantidad;
             productoExistente.cantidad += cantidad;
@@ -79,7 +89,58 @@ exports.createProduct = async (req, res) => {
             });
             ubicacionId = ubicacion.id;
         }
-        
+
+        // Si existe un producto (incluso inactivo) con el mismo nombre, manejamos reactivación
+        const productoExistente = await Producto.findOne({ where: { nombre } });
+        if (productoExistente) {
+            if (productoExistente.activo) {
+                return res.status(409).json({ msg: `El producto '${nombre}' ya existe.` });
+            }
+
+            // Only Admin can reactivate products
+            if (userRole !== 'Admin') {
+                return res.status(403).json({ msg: 'Solo Admin puede reactivar productos.' });
+            }
+
+            // Reactivar y actualizar con los nuevos datos
+            productoExistente.cantidad = cantidad;
+            productoExistente.precio = precio;
+            productoExistente.categoriaId = categoriaId;
+            productoExistente.ubicacionId = ubicacionId;
+            productoExistente.umbral = umbral !== undefined ? umbral : productoExistente.umbral;
+            productoExistente.activo = true;
+            // If no creator registered, set current user as creator
+            if (!productoExistente.usuarioCreadorId) productoExistente.usuarioCreadorId = req.user.id;
+            productoExistente.usuarioUltimaEdicionId = req.user.id;
+            productoExistente.fechaUltimaEdicion = new Date();
+            await productoExistente.save();
+
+            await Historial.create({
+                accion: 'reactivacion',
+                cantidad_anterior: null,
+                cantidad_nueva: productoExistente.cantidad,
+                detalles: {
+                    descripcion: `Producto "${nombre}" reactivado y actualizado.`,
+                    producto: productoExistente.toJSON()
+                },
+                usuarioId: req.user.id,
+                productoId: productoExistente.id
+            });
+
+            await checkAndCreateLowStockAlert(
+                productoExistente.id,
+                productoExistente.nombre,
+                productoExistente.cantidad,
+                productoExistente.umbral
+            );
+
+            return res.status(200).json(productoExistente);
+        }
+
+        if (userRole !== 'Admin') {
+            return res.status(403).json({ msg: 'Solo Admin puede crear nuevos productos.' });
+        }
+
         const nuevoProducto = await Producto.create({
             nombre,
             cantidad,
@@ -87,11 +148,12 @@ exports.createProduct = async (req, res) => {
             categoriaId,
             ubicacionId,
             umbral: umbral !== undefined ? umbral : 0,
-            usuarioUltimaEdicionId: req.user.id
+            usuarioUltimaEdicionId: req.user.id,
+            usuarioCreadorId: req.user.id
         });
 
         await Historial.create({
-            accion: 'creación',
+            accion: 'creacion',
             cantidad_anterior: 0,
             cantidad_nueva: nuevoProducto.cantidad,
             detalles: { 
@@ -133,10 +195,31 @@ exports.updateProduct = async (req, res) => {
         const datosAnteriores = productoAnterior.toJSON();
 
         if (userRole === 'Bodeguero') {
+            // Ensure product was created by an Admin
+            if (productoAnterior.usuarioCreadorId) {
+                const creador = await Usuario.findByPk(productoAnterior.usuarioCreadorId, { include: ['role'] });
+                if (!creador || !creador.role || creador.role.nombre !== 'Admin') {
+                    return res.status(403).json({ msg: 'Los bodegueros solo pueden operar sobre productos creados por Admin.' });
+                }
+            } else {
+                return res.status(403).json({ msg: 'Producto sin creador registrado. Solo Admin puede operar.' });
+            }
             if (Object.keys(newData).length > 1 || !newData.hasOwnProperty('cantidad')) {
                 return res.status(403).json({ msg: 'Los bodegueros solo pueden modificar la cantidad del producto.' });
             }
             newData = { cantidad: newData.cantidad }; 
+        }
+
+        // If a non-admin role is trying to update other fields, ensure product was created by Admin
+        if (userRole !== 'Admin' && userRole !== 'Bodeguero') {
+            if (productoAnterior.usuarioCreadorId) {
+                const creador = await Usuario.findByPk(productoAnterior.usuarioCreadorId, { include: ['role'] });
+                if (!creador || !creador.role || creador.role.nombre !== 'Admin') {
+                    return res.status(403).json({ msg: 'Solo se puede operar sobre productos creados por Admin.' });
+                }
+            } else {
+                return res.status(403).json({ msg: 'Producto sin creador registrado. Solo Admin puede operar.' });
+            }
         }
 
         const categoriaValue = newData.categoria || newData.categoriaId;
@@ -216,38 +299,94 @@ exports.deleteProduct = async (req, res) => {
             return res.status(404).json({ msg: 'Producto no encontrado.' });
         }
 
-        if (userRole === 'Encargado de inventario') {
-            const validReasons = ['venta', 'vencimiento', 'dañado', 'otro'];
-            if (!reason || !validReasons.includes(reason)) {
-                return res.status(400).json({ msg: 'Razón de eliminación inválida o faltante. Las razones válidas son: venta, vencimiento, dañado, otro.' });
+            // Si quien solicita la acción NO es Admin, tratamos la petición como una salida parcial:
+            // debe especificarse 'cantidad' y 'reason' en el body. Solo Admin puede realizar la eliminación (soft-delete).
+            if (userRole !== 'Admin') {
+                // Ensure product was created by Admin
+                if (productoAEliminar.usuarioCreadorId) {
+                    const creador = await Usuario.findByPk(productoAEliminar.usuarioCreadorId, { include: ['role'] });
+                    if (!creador || !creador.role || creador.role.nombre !== 'Admin') {
+                        return res.status(403).json({ msg: 'Solo se puede registrar salidas en productos creados por Admin.' });
+                    }
+                } else {
+                    return res.status(403).json({ msg: 'Producto sin creador registrado. Solo Admin puede operar.' });
+                }
+                const { cantidad } = req.body;
+                const validReasons = ['venta', 'vencimiento', 'dañado', 'otro'];
+                if (!reason || !validReasons.includes(reason)) {
+                    return res.status(400).json({ msg: 'Razón de salida inválida o faltante. Las razones válidas son: venta, vencimiento, dañado, otro.' });
+                }
+                if (reason === 'otro' && (!additionalDetails || additionalDetails.trim() === '')) {
+                    return res.status(400).json({ msg: 'Debe proporcionar detalles adicionales cuando la razón es "otro".' });
+                }
+                const qtyToRemove = parseInt(cantidad, 10);
+                if (!qtyToRemove || qtyToRemove <= 0) {
+                    return res.status(400).json({ msg: 'Debe especificar una cantidad válida a remover.' });
+                }
+                if (qtyToRemove > productoAEliminar.cantidad) {
+                    return res.status(400).json({ msg: 'La cantidad a remover no puede ser mayor a la cantidad disponible.' });
+                }
+
+                const cantidadAnterior = productoAEliminar.cantidad;
+                productoAEliminar.cantidad = productoAEliminar.cantidad - qtyToRemove;
+                productoAEliminar.usuarioUltimaEdicionId = req.user.id;
+                productoAEliminar.fechaUltimaEdicion = new Date();
+                await productoAEliminar.save();
+
+                const detallesHistorial = {
+                    descripcion: `Salida de ${qtyToRemove} unidades por '${reason}' en Producto "${productoAEliminar.nombre}".`,
+                    producto: productoAEliminar.toJSON(),
+                    razonEliminacion: reason,
+                    detallesAdicionalesEliminacion: additionalDetails || null,
+                    cantidad_eliminada: qtyToRemove
+                };
+
+                await Historial.create({
+                    accion: 'salida',
+                    cantidad_anterior: cantidadAnterior,
+                    cantidad_nueva: productoAEliminar.cantidad,
+                    detalles: detallesHistorial,
+                    usuarioId: req.user.id,
+                    productoId: id
+                });
+
+                // Comprobar alertas de stock
+                await checkAndCreateLowStockAlert(
+                    productoAEliminar.id,
+                    productoAEliminar.nombre,
+                    productoAEliminar.cantidad,
+                    productoAEliminar.umbral
+                );
+
+                return res.json({ msg: `Salida registrada. Cantidad restante: ${productoAEliminar.cantidad}` });
             }
-            if (reason === 'otro' && (!additionalDetails || additionalDetails.trim() === '')) {
-                return res.status(400).json({ msg: 'Debe proporcionar detalles adicionales cuando la razón es "otro".' });
+
+            // Si es Admin (u otro rol con 'Gestionar Productos'), se realiza eliminación (soft-delete)
+            const detallesHistorial = { 
+                descripcion: `Producto "${productoAEliminar.nombre}" eliminado.`,
+                producto: productoAEliminar.toJSON() 
+            };
+
+            if (userRole === 'Encargado de inventario') {
+                detallesHistorial.razonEliminacion = reason;
+                if (reason === 'otro') {
+                    detallesHistorial.detallesAdicionalesEliminacion = additionalDetails;
+                }
             }
-        }
 
-        const detallesHistorial = { 
-            descripcion: `Producto "${productoAEliminar.nombre}" eliminado.`,
-            producto: productoAEliminar.toJSON() 
-        };
+            await Historial.create({
+                accion: 'eliminacion',
+                detalles: detallesHistorial,
+                usuarioId: req.user.id,
+                productoId: id
+            });
 
-        if (userRole === 'Encargado de inventario') {
-            detallesHistorial.razonEliminacion = reason;
-            if (reason === 'otro') {
-                detallesHistorial.detallesAdicionalesEliminacion = additionalDetails;
-            }
-        }
+            productoAEliminar.activo = false;
+            productoAEliminar.usuarioUltimaEdicionId = req.user.id;
+            productoAEliminar.fechaUltimaEdicion = new Date();
+            await productoAEliminar.save();
 
-        await Historial.create({
-            accion: 'eliminación',
-            detalles: detallesHistorial,
-            usuarioId: req.user.id,
-            productoId: id
-        });
-
-        await productoAEliminar.destroy();
-        
-        res.json({ msg: 'Producto eliminado con éxito.' });
+            res.json({ msg: 'Producto eliminado con éxito.' });
     } catch (error) {
         console.error('Error al eliminar producto:', error);
         res.status(500).json({ msg: 'Error al eliminar producto.', error: error.message });

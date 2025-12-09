@@ -488,76 +488,184 @@ table th{
     }
 }
 
-/* ===== DARK THEME ===== */
-:root.dark{
-    --bg:#0b1220;
-    --card:#071027;
-    --accent:#2b7bd3;
-    --accent-2:#1f5aa6;
-    --muted:#9aa6bd;
+/* ===== DARK THEME (REBUILT) ===== */
+:root.dark {
+    --bg: #0b1220;
+    --card: #121c33; /* Slightly lighter than bg */
+    --accent: #388bfd; /* A more vibrant blue */
+    --accent-2: #2b7bd3;
+    --muted: #8493ad;
+    --text-color: #e6eef8;
+    --border-color: #2a3b5a; /* A visible but subtle border color */
+    --input-bg: #0e172a;
 }
 
-body.dark{
-    background:var(--bg);
-    color:#e6eef8;
+/* === GENERAL STYLES === */
+body.dark {
+    background-color: var(--bg);
+    color: var(--text-color);
 }
 
-body.dark .card{
-    background:var(--card);
-    box-shadow:0 6px 24px rgba(2,6,23,0.6);
+/* === LAYOUT & CONTAINERS === */
+body.dark .card,
+body.dark .modal-content,
+body.dark .dropdown-menu {
+    background-color: var(--card);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    color: var(--text-color);
 }
 
+/* === FORMS & INPUTS === */
 body.dark input,
 body.dark textarea,
-body.dark select{
-    background:#071428;
-    border:1px solid rgba(255,255,255,0.04);
-    color:#dbeafe;
+body.dark select {
+    background-color: var(--input-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
 }
 
-body.dark .top-controls input,
-body.dark .top-controls select{
-    background:#0b1524;
+body.dark input::placeholder,
+body.dark textarea::placeholder {
+    color: var(--muted);
 }
 
-body.dark .topbar{
-    background:linear-gradient(90deg,var(--accent),var(--accent-2));
+body.dark input:focus,
+body.dark textarea:focus,
+body.dark select:focus {
+    background-color: var(--input-bg); /* Keep the same background */
+    border-color: var(--accent); /* Highlight with accent color */
+    color: var(--text-color);
+    box-shadow: none; /* Remove bootstrap's default shadow */
 }
 
-body.dark button[aria-ghost]{
-    background:transparent;
-    color:#cbd5e1;
-    border:1px solid rgba(255,255,255,0.04);
+body.dark label {
+    color: var(--muted);
 }
 
-body.dark #themeToggle{
-    border-color:rgba(255,255,255,0.08);
+/* === TABLES === */
+body.dark table, 
+body.dark .movements {
+    background-color: var(--card);
 }
 
-body.dark .tab-btn{
-    background:transparent;
-    border:1px solid rgba(255,255,255,0.06);
-    color:#cbd5e1;
+body.dark table th, 
+body.dark .movements th {
+    background-color: rgba(0,0,0,0.15);
+    border-bottom: 2px solid var(--border-color);
+    color: var(--text-color);
 }
 
-body.dark .tab-btn:hover{
-    box-shadow:0 6px 18px rgba(0,0,0,0.45);
+body.dark table td, 
+body.dark .movements td {
+    border-color: var(--border-color);
 }
 
-body.dark .tab-btn.active{
-    background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.02));
-    border-color:var(--accent);
-    color:var(--accent);
+/* === BUTTONS === */
+body.dark button[aria-ghost] {
+    background-color: transparent;
+    color: #cbd5e1;
+    border: 1px solid var(--border-color);
 }
 
-body.dark .movements th,
-body.dark table th{
-    background: rgba(255,255,255,0.02);
+body.dark button[aria-ghost]:hover {
+    background-color: rgba(255,255,255,0.05);
 }
 
-body.dark .footer{
-    background: var(--card);
-    border-top: 1px solid rgba(255,255,255,0.04);
+/* === BOOTSTRAP COMPONENT OVERRIDES === */
+
+/* Navbar */
+body.dark .navbar.bg-primary {
+    background: linear-gradient(90deg, var(--accent-2), var(--accent)) !important;
+}
+
+/* Modals */
+body.dark .modal-header,
+body.dark .modal-footer {
+    border-bottom-color: var(--border-color);
+    border-top-color: var(--border-color);
+}
+
+body.dark .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Accordion */
+body.dark .accordion-item {
+    background-color: var(--card);
+    border: 1px solid var(--border-color);
+}
+body.dark .accordion-button {
+    background-color: var(--card);
+    color: var(--text-color);
+}
+body.dark .accordion-button:not(.collapsed) {
+    background-color: var(--input-bg);
+    color: var(--accent);
+}
+body.dark .accordion-button::after {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+body.dark .accordion-collapse {
+    border-top-color: var(--border-color);
+}
+
+
+/* Dropdowns */
+body.dark .dropdown-menu {
+    --bs-dropdown-link-hover-bg: var(--accent);
+    --bs-dropdown-link-hover-color: #fff;
+}
+body.dark .dropdown-item {
+     color: var(--text-color);
+}
+
+
+/* Table Head */
+body.dark .table-light {
+    --bs-table-bg: #1a2742; 
+    --bs-table-color: var(--text-color);
+    border-color: var(--border-color);
+}
+
+/* Badges */
+body.dark .badge.bg-primary {
+    background-color: var(--accent) !important;
+    color: #fff !important;
+}
+body.dark .badge.bg-secondary {
+    background-color: var(--muted) !important;
+    color: var(--bg) !important;
+}
+body.dark .badge.bg-info {
+    background-color: #0dcaf0 !important;
+    color: #000 !important;
+}
+
+/* Alerts */
+body.dark .alert.alert-warning {
+    background-color: #332701;
+    color: #ffda6a;
+    border-color: #806b23;
+}
+body.dark .alert.alert-success {
+    background-color: #0a2d21;
+    color: #7ee2b6;
+    border-color: #1a5940;
+}
+
+/* Lists */
+body.dark .list-group-item {
+    background-color: var(--input-bg);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+/* Footer */
+body.dark .footer {
+    background: var(--bg);
+    border-top: 1px solid var(--border-color);
+    color: var(--muted);
 }
 
 /* ===== UTILIDADES RESPONSIVE ===== */
@@ -633,5 +741,129 @@ textarea:focus{
     a {
         min-height: 44px;
         min-width: 44px;
+    }
+}
+
+/* ===== ENHANCEMENTS FOR SMALL SCREENS (SPECIFIC) ===== */
+@media (max-width: 768px) {
+    /* Navbar: stack totals and make them easier to read */
+    .navbar .container-fluid {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    #nav-totals {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 8px;
+        order: 3; /* move under links */
+    }
+
+    #nav-total-money, #nav-total-products {
+        font-size: 14px;
+        padding: 6px 10px;
+        border-radius: 14px;
+        white-space: nowrap;
+    }
+
+    /* Make login section stack and be touch-friendly */
+    #login-section {
+        width: 100%;
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        align-items: center;
+        margin-top: 8px;
+        order: 4;
+    }
+
+    #login-section input[type="text"]{
+        flex: 1 1 60%;
+        min-width: 0;
+    }
+
+    #login-section button{
+        flex: 0 0 36%;
+    }
+
+    /* Ensure user display area wraps nicely when visible */
+    #user-display {
+        width: 100%;
+        justify-content: center;
+        gap: 8px;
+        order: 4;
+        margin-top: 8px;
+    }
+
+    /* Charts: ensure canvases don't overflow and scale nicely */
+    canvas {
+        max-width: 100% !important;
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    /* Tables: allow comfortable scrolling and slightly larger touch areas */
+    .table-responsive {
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 6px;
+    }
+
+    /* Modals: make dialog almost fullscreen and allow internal scroll */
+    .modal-dialog {
+        max-width: 96%;
+        margin: 8px auto;
+    }
+
+    .modal-content {
+        max-height: calc(100vh - 32px);
+        overflow: auto;
+    }
+
+    /* Buttons and action controls full width for easier tapping */
+    .action-buttons button,
+    .form-actions button {
+        width: 100%;
+    }
+
+    /* Slightly larger footer touch area */
+    .footer{
+        padding: 14px 10px;
+    }
+}
+
+/* ===== FIX: Make dropdown (Admin) items tappable inside collapsed navbar on mobile ===== */
+@media (max-width: 768px) {
+    /* Show dropdown menu items as normal stacked links inside the collapse */
+    .navbar .nav-item.dropdown .dropdown-menu {
+        position: static !important;
+        float: none !important;
+        display: block !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0.25rem 0 !important;
+        margin: 0 !important;
+    }
+
+    /* Make dropdown items visually consistent with navbar links */
+    .navbar .nav-item.dropdown .dropdown-item {
+        padding: 10px 12px;
+        color: #fff;
+        background: transparent;
+        border-radius: 6px;
+        display: block;
+    }
+
+    /* Hide the caret/arrow because menu is expanded inline */
+    .navbar .nav-item.dropdown > .nav-link.dropdown-toggle::after {
+        display: none;
+    }
+
+    /* Slight spacing to separate the admin block */
+    .navbar .nav-item.dropdown {
+        margin-top: 6px;
+        width: 100%;
     }
 }

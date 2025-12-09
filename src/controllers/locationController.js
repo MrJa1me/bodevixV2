@@ -1,14 +1,6 @@
 // src/controllers/locationController.js
 
-const { Ubicacion } = require('../config/database');
-
-// Middleware de verificación de rol para funciones de administrador
-const checkAdminRole = (req, res, next) => {
-    if (!req.user || !req.user.role || req.user.role.nombre !== 'Admin') {
-        return res.status(403).json({ msg: 'Acceso denegado. Solo los administradores pueden realizar esta acción.' });
-    }
-    next();
-};
+const { Ubicacion } = require('../models');
 
 // Obtener todas las ubicaciones
 exports.getAllLocations = async (req, res) => {
@@ -22,7 +14,7 @@ exports.getAllLocations = async (req, res) => {
 };
 
 // Crear una nueva ubicación
-exports.createLocation = [checkAdminRole, async (req, res) => {
+exports.createLocation = async (req, res) => {
     const { nombre, descripcion } = req.body;
     if (!nombre) {
         return res.status(400).json({ msg: 'El nombre de la ubicación es requerido.' });
@@ -37,10 +29,10 @@ exports.createLocation = [checkAdminRole, async (req, res) => {
         console.error('Error al crear ubicación:', error);
         res.status(500).json({ msg: 'Error interno al crear la ubicación.' });
     }
-}];
+};
 
 // Actualizar una ubicación
-exports.updateLocation = [checkAdminRole, async (req, res) => {
+exports.updateLocation = async (req, res) => {
     const { id } = req.params;
     const { nombre, descripcion } = req.body;
     try {
@@ -59,10 +51,10 @@ exports.updateLocation = [checkAdminRole, async (req, res) => {
         console.error('Error al actualizar ubicación:', error);
         res.status(500).json({ msg: 'Error interno al actualizar la ubicación.' });
     }
-}];
+};
 
 // Eliminar una ubicación
-exports.deleteLocation = [checkAdminRole, async (req, res) => {
+exports.deleteLocation = async (req, res) => {
     const { id } = req.params;
     try {
         const location = await Ubicacion.findByPk(id);
@@ -75,4 +67,4 @@ exports.deleteLocation = [checkAdminRole, async (req, res) => {
         console.error('Error al eliminar ubicación:', error);
         res.status(500).json({ msg: 'Error interno al eliminar la ubicación.' });
     }
-}];
+};

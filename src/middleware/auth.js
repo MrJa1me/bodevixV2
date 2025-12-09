@@ -1,6 +1,6 @@
 // src/middleware/auth.js
 
-const { Usuario, Role, Permiso, RolePermiso } = require('../config/database');
+const { Usuario, Role, Permiso, RolePermiso } = require('../models');
 
 // Middleware 1: Carga el usuario basado en la cabecera X-User
 exports.loadUser = async (req, res, next) => {
@@ -15,7 +15,11 @@ exports.loadUser = async (req, res, next) => {
             include: [{
                 model: Role,
                 as: 'role',
-                attributes: ['id', 'nombre']
+                include: [{
+                    model: Permiso,
+                    as: 'permisos',
+                    through: { attributes: [] } // No traer datos de la tabla intermedia
+                }]
             }]
         });
         if (!user) {
@@ -43,7 +47,7 @@ exports.checkRole = (roles) => {
 };
 
 // Middleware 3: Verifica un permiso específico
-exports.checkPermission = (permissionName) => {
+exports.checkPermission = (permissionNameOrArray) => {
     return async (req, res, next) => {
         if (!req.user || !req.user.role) {
             return res.status(403).json({ msg: 'Acceso denegado. Rol de usuario no identificado.' });
@@ -52,27 +56,28 @@ exports.checkPermission = (permissionName) => {
         const roleId = req.user.role.id;
 
         try {
-            // 1. Encontrar el ID del permiso por su nombre
-            const permiso = await Permiso.findOne({ where: { nombre: permissionName } });
-            if (!permiso) {
-                console.error(`Error de autorización: El permiso '${permissionName}' no existe en la base de datos.`);
+            const permissionsToCheck = Array.isArray(permissionNameOrArray) ? permissionNameOrArray : [permissionNameOrArray];
+
+            // Buscar permisos existentes por nombre
+            const permisos = await Permiso.findAll({ where: { nombre: permissionsToCheck } });
+            if (!permisos || permisos.length === 0) {
+                console.error(`Error de autorización: Ninguno de los permisos solicitados existe en la base de datos.`);
                 return res.status(500).json({ msg: 'Error interno del servidor al verificar permisos.' });
             }
-            const permisoId = permiso.id;
 
-            // 2. Verificar si existe la asociación en RolePermiso
-            const roleHasPermission = await RolePermiso.findOne({
+            // Verificamos si alguna de las opciones está asociada al rol
+            const permisoIds = permisos.map(p => p.id);
+
+            const roleHasAny = await RolePermiso.findOne({
                 where: {
-                    roleId: roleId,
-                    permisoId: permisoId
+                    roleId,
+                    permisoId: permisoIds
                 }
             });
 
-            if (roleHasPermission) {
-                return next(); // El rol tiene el permiso, continuar
-            } else {
-                return res.status(403).json({ msg: `Acceso denegado. Se requiere el permiso '${permissionName}'.` });
-            }
+            if (roleHasAny) return next();
+
+            return res.status(403).json({ msg: `Acceso denegado. Se requiere uno de los permisos: ${permissionsToCheck.join(', ')}.` });
         } catch (err) {
             console.error('Error en checkPermission middleware:', err);
             return res.status(500).json({ msg: 'Error interno al verificar permisos.' });
