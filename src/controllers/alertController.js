@@ -1,6 +1,10 @@
 // src/controllers/alertController.js
 
+<<<<<<< HEAD
 const { Alerta, Producto, Ubicacion } = require('../models');
+=======
+const { Alerta, Producto, Ubicacion } = require('../config/database');
+>>>>>>> d4375837180d22a0f4540aa41f172f365d68471a
 
 // Función para obtener todas las alertas activas
 exports.getActiveAlerts = async (req, res) => {

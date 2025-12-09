@@ -26,7 +26,11 @@ module.exports = (sequelize) => {
 
   Role.associate = (models) => {
     Role.belongsToMany(models.Permiso, {
+<<<<<<< HEAD
       through: 'RolePermiso',
+=======
+      through: 'RolePermisos',
+>>>>>>> d4375837180d22a0f4540aa41f172f365d68471a
       as: 'permisos',
       foreignKey: 'roleId'
     });

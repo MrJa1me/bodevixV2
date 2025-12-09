@@ -1,6 +1,18 @@
 // src/controllers/locationController.js
 
+<<<<<<< HEAD
 const { Ubicacion } = require('../models');
+=======
+const { Ubicacion } = require('../config/database');
+
+// Middleware de verificación de rol para funciones de administrador
+const checkAdminRole = (req, res, next) => {
+    if (!req.user || !req.user.role || req.user.role.nombre !== 'Admin') {
+        return res.status(403).json({ msg: 'Acceso denegado. Solo los administradores pueden realizar esta acción.' });
+    }
+    next();
+};
+>>>>>>> d4375837180d22a0f4540aa41f172f365d68471a
 
 // Obtener todas las ubicaciones
 exports.getAllLocations = async (req, res) => {
@@ -14,7 +26,11 @@ exports.getAllLocations = async (req, res) => {
 };
 
 // Crear una nueva ubicación
+<<<<<<< HEAD
 exports.createLocation = async (req, res) => {
+=======
+exports.createLocation = [checkAdminRole, async (req, res) => {
+>>>>>>> d4375837180d22a0f4540aa41f172f365d68471a
     const { nombre, descripcion } = req.body;
     if (!nombre) {
         return res.status(400).json({ msg: 'El nombre de la ubicación es requerido.' });
@@ -29,10 +45,17 @@ exports.createLocation = async (req, res) => {
         console.error('Error al crear ubicación:', error);
         res.status(500).json({ msg: 'Error interno al crear la ubicación.' });
     }
+<<<<<<< HEAD
 };
 
 // Actualizar una ubicación
 exports.updateLocation = async (req, res) => {
+=======
+}];
+
+// Actualizar una ubicación
+exports.updateLocation = [checkAdminRole, async (req, res) => {
+>>>>>>> d4375837180d22a0f4540aa41f172f365d68471a
     const { id } = req.params;
     const { nombre, descripcion } = req.body;
     try {
@@ -51,10 +74,17 @@ exports.updateLocation = async (req, res) => {
         console.error('Error al actualizar ubicación:', error);
         res.status(500).json({ msg: 'Error interno al actualizar la ubicación.' });
     }
+<<<<<<< HEAD
 };
 
 // Eliminar una ubicación
 exports.deleteLocation = async (req, res) => {
+=======
+}];
+
+// Eliminar una ubicación
+exports.deleteLocation = [checkAdminRole, async (req, res) => {
+>>>>>>> d4375837180d22a0f4540aa41f172f365d68471a
     const { id } = req.params;
     try {
         const location = await Ubicacion.findByPk(id);
@@ -67,4 +97,8 @@ exports.deleteLocation = async (req, res) => {
         console.error('Error al eliminar ubicación:', error);
         res.status(500).json({ msg: 'Error interno al eliminar la ubicación.' });
     }
+<<<<<<< HEAD
 };
+=======
+}];
+>>>>>>> d4375837180d22a0f4540aa41f172f365d68471a

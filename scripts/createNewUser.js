@@ -1,7 +1,11 @@
 // scripts/createNewUser.js
 
+<<<<<<< HEAD
 const { connectDB, sequelize } = require('../src/config/database');
 const { Usuario, Role } = require('../src/models');
+=======
+const { connectDB, Usuario, Role, sequelize } = require('../src/config/database');
+>>>>>>> d4375837180d22a0f4540aa41f172f365d68471a
 
 async function createNewUser(username, roleName) {
     try {

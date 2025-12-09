@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 /* public/styles.css - Versión mejorada con diseño responsive */
 
@@ -866,4 +867,68 @@ textarea:focus{
         margin-top: 6px;
         width: 100%;
     }
+=======
+/* public/styles.css */
+
+/* Estilo general del cuerpo */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    padding-bottom: 60px; /* Altura del footer */
+}
+
+/* Sombra sutil para la barra de navegación */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,.04);
+}
+
+/* Estilo de las tarjetas para un look más limpio */
+.card {
+    border-radius: 0.5rem;
+    border: 1px solid #e9ecef;
+}
+
+/* Ajuste para los modales */
+.modal-header {
+    border-bottom: 1px solid #dee2e6;
+}
+.modal-footer {
+    border-top: 1px solid #dee2e6;
+}
+
+/* Estilo para los botones de acción en las tablas */
+.action-buttons .btn {
+    margin-right: 5px;
+}
+
+/* Ocultar spinners de los inputs de tipo número */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Animación de entrada suave */
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.footer {
+    padding: 1rem 0;
+    text-align: center;
+    font-size: 0.9em;
+    color: #6c757d;
+    background-color: #f8f9fa;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    border-top: 1px solid #e9ecef;
+>>>>>>> d4375837180d22a0f4540aa41f172f365d68471a
 }

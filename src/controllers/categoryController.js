@@ -1,6 +1,10 @@
 // src/controllers/categoryController.js
 
+<<<<<<< HEAD
 const { Categoria } = require('../models');
+=======
+const { Categoria } = require('../config/database');
+>>>>>>> d4375837180d22a0f4540aa41f172f365d68471a
 
 // Middleware de verificación de rol para funciones de administrador
 const checkAdminRole = (req, res, next) => {

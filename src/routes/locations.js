@@ -1,4 +1,5 @@
 // src/routes/locations.js
+<<<<<<< HEAD
 const express = require('express');
 const router = express.Router();
 const locationController = require('../controllers/locationController');
@@ -8,6 +9,19 @@ const { loadUser, checkPermission } = require('../middleware/auth');
 router.use(loadUser, checkPermission('Gestionar Ubicaciones'));
 
 // --- Rutas CRUD de Ubicaciones ---
+=======
+
+const express = require('express');
+const router = express.Router();
+const locationController = require('../controllers/locationController');
+const { loadUser, checkRole } = require('../middleware/auth');
+
+// Todas las rutas en este archivo requieren ser admin.
+// Aplicamos los middlewares a nivel de router para no repetirlos.
+router.use(loadUser, checkRole('Admin'));
+
+// --- Rutas CRUD de Ubicaciones (Solo para Admins) ---
+>>>>>>> d4375837180d22a0f4540aa41f172f365d68471a
 
 // GET /api/locations -> Obtener todas las ubicaciones
 router.get('/', locationController.getAllLocations);

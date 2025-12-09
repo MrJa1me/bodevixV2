@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 const { Usuario, Role, RolePermiso, Permiso } = require('../models');
+=======
+// src/controllers/authController.js
+
+const { Usuario, Role } = require('../config/database'); // Importar Role también para futuras referencias si se necesita validar el roleId
+>>>>>>> d4375837180d22a0f4540aa41f172f365d68471a
 
 // Tarea 1: Registro (para crear usuarios de prueba)
 // Se ha simplificado para no usar contraseñas.
@@ -33,6 +39,7 @@ exports.register = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 // Devuelve información del usuario "logueado" y sus permisos
 exports.me = async (req, res) => {
   if (!req.user) {
@@ -61,3 +68,20 @@ exports.me = async (req, res) => {
               username: req.user.username,
               role: req.user.role // Enviar el objeto de rol completo
           });};
+=======
+// Devuelve información del usuario "logueado" a través de la cabecera X-User
+// (req.user es agregado por el middleware 'loadUser')
+exports.me = async (req, res) => {
+  // El middleware loadUser ya ha puesto el usuario en req.user
+  if (!req.user) {
+    return res.status(401).json({ msg: 'No autenticado. Utiliza la cabecera X-User.' });
+  }
+  
+  // Devuelve la información del usuario que se encontró
+  res.json({ 
+    id: req.user.id, 
+    username: req.user.username, 
+    role: req.user.role ? req.user.role.nombre : 'No asignado' // Asumiendo que role está cargado
+  });
+};
+>>>>>>> d4375837180d22a0f4540aa41f172f365d68471a

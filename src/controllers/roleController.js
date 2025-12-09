@@ -1,10 +1,15 @@
 // src/controllers/roleController.js
 
+<<<<<<< HEAD
 const { Role, Permiso, RolePermiso } = require('../models');
+=======
+const { Role, Permiso } = require('../config/database');
+>>>>>>> d4375837180d22a0f4540aa41f172f365d68471a
 
 // Obtener todos los roles
 exports.getAllRoles = async (req, res) => {
     try {
+<<<<<<< HEAD
         const roles = await Role.findAll({
             include: {
                 model: Permiso,
@@ -14,6 +19,10 @@ exports.getAllRoles = async (req, res) => {
         });
         const allPermissions = await Permiso.findAll();
         res.json({ roles, permissions: allPermissions });
+=======
+        const roles = await Role.findAll();
+        res.json(roles);
+>>>>>>> d4375837180d22a0f4540aa41f172f365d68471a
     } catch (error) {
         console.error("Error al obtener roles:", error);
         res.status(500).json({ msg: 'Error al obtener roles.' });
